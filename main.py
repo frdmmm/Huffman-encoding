@@ -124,7 +124,6 @@ if __name__ == "__main__":
             print(f"TXT file {filename} not found.")
             sys.exit(1)
         encoded=HuffmanEncodingWithBaseTree(content, basetree)
-        print(encoded)
         hasil=encoded.encode('utf-8')
         outputname=input("Enter the file name to store the encoded data: ")
         with open(outputname, 'wb') as file:
