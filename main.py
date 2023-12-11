@@ -1,12 +1,12 @@
 class Nodes:  
-    def __init__(self, probability, symbol, left = None, right = None):  
-        self.probability = probability  
+    def __init__(self, frequency, symbol, left = None, right = None):  
+        self.frequency = frequency
         self.symbol = symbol  
         self.left = left  
         self.right = right  
         self.code = ''  
 
-def CalculateProbability(the_data):  
+def CalculateFrequency(the_data):  
     symbols = dict()  
     for item in the_data:  
         if symbols.get(item) == None:  
@@ -41,49 +41,35 @@ def OutputEncoded(the_data, coding):
     return the_string  
   
 def HuffmanEncoding(the_data):  
-    symbolWithProbs = CalculateProbability(the_data)  
-    symbols = symbolWithProbs.keys()  
-    the_probabilities = symbolWithProbs.values()  
-    # print("symbols: ", symbols)  
-    # print("probabilities: ", the_probabilities)  
-      
+    symbolWithFreqs = CalculateFrequency(the_data)  
+    symbols = symbolWithFreqs.keys()  
     the_nodes = []  
-      
-    # converting symbol and prob to node
     for symbol in symbols:  
-        the_nodes.append(Nodes(symbolWithProbs.get(symbol), symbol))  
-      
+        the_nodes.append(Nodes(symbolWithFreqs.get(symbol), symbol))  
     while len(the_nodes) > 1:  
-        # sort based on probablity 
-        the_nodes = sorted(the_nodes, key = lambda x: x.probability)  
-        # for node in nodes:    
-        #      print(node.symbol, node.prob)  
-       
+        # sort based on frequency
+        the_nodes = sorted(the_nodes, key = lambda x: x.frequency)  
         right = the_nodes[0]  
         left = the_nodes[1]  
-      
         left.code = 0  
         right.code = 1  
- 
-        newNode = Nodes(left.probability + right.probability, left.symbol + right.symbol, left, right)  
-      
+        newNode = Nodes(left.frequency + right.frequency, left.symbol + right.symbol, left, right)  
         the_nodes.remove(left)  
         the_nodes.remove(right)  
         the_nodes.append(newNode)  
-              
     huffmanEncoding = CalculateCodes(the_nodes[0])  
-    # print("symbols with codes", huffmanEncoding)  
+    print("Base tree symbol dictionary: ", huffmanEncoding)  
     encodedOutput = OutputEncoded(the_data,huffmanEncoding)  
     return encodedOutput, the_nodes[0]  
 
 def HuffmanEncodingWithBaseTree(the_data, base_tree):
     the_codes=CalculateCodes(base_tree)
-    # print("Symbols with codes:", the_codes)
     encodedOutput = OutputEncoded(the_data, the_codes)
+    print("Encoded file :", encodedOutput)
     return encodedOutput
 
 def HuffmanDecoding(encodedData, huffmanTree):  
-    treeHead = huffmanTree  
+    Root = huffmanTree  
     decodedOutput = []  
     for x in encodedData:  
         if x == '1':  
@@ -95,10 +81,10 @@ def HuffmanDecoding(encodedData, huffmanTree):
                 pass  
         except AttributeError:  
             decodedOutput.append(huffmanTree.symbol)  
-            huffmanTree = treeHead  
+            huffmanTree = Root  
           
     string = ''.join([str(item) for item in decodedOutput])  
-    return string  
+    return string   
 
 if __name__ == "__main__":
     import sys
@@ -137,7 +123,8 @@ if __name__ == "__main__":
             print(f"binary file {filename} not found.")
             sys.exit(1)
         hasil=HuffmanDecoding(stringcontent, basetree)
-        print("Decoded Output:", hasil)
+        print("Decoded Output: ")
+        print(hasil)
         write=input("Write to txt? [y/n]")
         if write=='y':
             name=input("Enter file name: ")
